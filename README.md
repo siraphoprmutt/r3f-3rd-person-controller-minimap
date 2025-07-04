@@ -1,5 +1,6 @@
 # r3f-3rd-person-controller-minimap
-![Video thumbnail](http://img.youtube.com/vi/d3cMODi1CtU/maxresdefault.jpg?w)
+
+![r3f-minimap-tutorial-thumbnail](https://github.com/user-attachments/assets/6cfb03d9-c7b8-4235-af55-35913d91f11f)
 
 [Video tutorial](https://youtu.be/d3cMODi1CtU)
 
