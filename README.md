@@ -1,12 +1,11 @@
-# r3f-3rd-person-controller-final
+# r3f-3rd-person-controller-minimap
+![Video thumbnail](http://img.youtube.com/vi/d3cMODi1CtU/maxresdefault.jpg?w)
 
-![Video thumbnail](http://img.youtube.com/vi/yjpGVIe_Gy8/maxresdefault.jpg?w)
+[Video tutorial](https://youtu.be/d3cMODi1CtU)
 
-[Video tutorial](https://youtu.be/yjpGVIe_Gy8)
+[Starter pack](https://github.com/wass08/r3f-3rd-person-controller-final)
 
-[Starter pack](https://github.com/wass08/r3f-3rd-person-controller-starter)
-
-[Live demo](https://r3f-3rd-person-controller-final.vercel.app/)
+[Live demo](https://minimap.wawasensei.dev/)
 
 ```
 yarn
