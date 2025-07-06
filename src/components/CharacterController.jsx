@@ -59,16 +59,17 @@ export const CharacterController = () => {
   const [, get] = useKeyboardControls();
   const isClicking = useRef(false);
 
+  const jumpCount = useRef(0); // <-- ตัวนับจำนวนกระโดด
+
   useEffect(() => {
-    const onMouseDown = (e) => {
+    const onMouseDown = () => {
       isClicking.current = true;
     };
-    const onMouseUp = (e) => {
+    const onMouseUp = () => {
       isClicking.current = false;
     };
     document.addEventListener("mousedown", onMouseDown);
     document.addEventListener("mouseup", onMouseUp);
-    // touch
     document.addEventListener("touchstart", onMouseDown);
     document.addEventListener("touchend", onMouseUp);
     return () => {
@@ -88,32 +89,21 @@ export const CharacterController = () => {
         z: 0,
       };
 
-      if (get().forward) {
-        movement.z = 1;
-      }
-      if (get().backward) {
-        movement.z = -1;
-      }
+      if (get().forward) movement.z = 1;
+      if (get().backward) movement.z = -1;
 
       let speed = get().run ? RUN_SPEED : WALK_SPEED;
 
       if (isClicking.current) {
-        console.log("clicking", mouse.x, mouse.y);
-        if (Math.abs(mouse.x) > 0.1) {
-          movement.x = -mouse.x;
-        }
+        if (Math.abs(mouse.x) > 0.1) movement.x = -mouse.x;
         movement.z = mouse.y + 0.4;
         if (Math.abs(movement.x) > 0.5 || Math.abs(movement.z) > 0.5) {
           speed = RUN_SPEED;
         }
       }
 
-      if (get().left) {
-        movement.x = 1;
-      }
-      if (get().right) {
-        movement.x = -1;
-      }
+      if (get().left) movement.x = 1;
+      if (get().right) movement.x = -1;
 
       if (movement.x !== 0) {
         rotationTarget.current += ROTATION_SPEED * movement.x;
@@ -127,42 +117,52 @@ export const CharacterController = () => {
         vel.z =
           Math.cos(rotationTarget.current + characterRotationTarget.current) *
           speed;
-        if (speed === RUN_SPEED) {
-          setAnimation("run");
-        } else {
-          setAnimation("walk");
-        }
+        setAnimation(speed === RUN_SPEED ? "run" : "walk");
       } else {
         setAnimation("idle");
       }
+
+      // ตรวจสอบอยู่บนพื้น
+      const onGround = rb.current.translation().y <= 0.26;
+      if (onGround && vel.y <= 0) {
+        jumpCount.current = 0; // รีเซ็ตเมื่อถึงพื้น
+      }
+
+      // กระโดดสองชั้น: อนุญาตให้ jumpCount <= 1 (0=แรก, 1=สอง)
+      if (get().jump && jumpCount.current < 2) {
+        vel.y = 4;
+        setAnimation("jump");
+        jumpCount.current += 1;
+      }
+
+      rb.current.setLinvel(vel, true);
+
       character.current.rotation.y = lerpAngle(
         character.current.rotation.y,
         characterRotationTarget.current,
         0.1
       );
 
-      rb.current.setLinvel(vel, true);
-    }
+      character.current.getWorldPosition(GameState.characterPosition);
 
-    character.current.getWorldPosition(GameState.characterPosition);
+      container.current.rotation.y = MathUtils.lerp(
+        container.current.rotation.y,
+        rotationTarget.current,
+        0.1
+      );
 
-    // CAMERA
-    container.current.rotation.y = MathUtils.lerp(
-      container.current.rotation.y,
-      rotationTarget.current,
-      0.1
-    );
+      GameState.containerRotation = container.current.rotation.y;
 
-    GameState.containerRotation = container.current.rotation.y;
+      cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
+      camera.position.lerp(cameraWorldPosition.current, 0.1);
 
-    cameraPosition.current.getWorldPosition(cameraWorldPosition.current);
-    camera.position.lerp(cameraWorldPosition.current, 0.1);
-
-    if (cameraTarget.current) {
-      cameraTarget.current.getWorldPosition(cameraLookAtWorldPosition.current);
-      cameraLookAt.current.lerp(cameraLookAtWorldPosition.current, 0.1);
-
-      camera.lookAt(cameraLookAt.current);
+      if (cameraTarget.current) {
+        cameraTarget.current.getWorldPosition(
+          cameraLookAtWorldPosition.current
+        );
+        cameraLookAt.current.lerp(cameraLookAtWorldPosition.current, 0.1);
+        camera.lookAt(cameraLookAt.current);
+      }
     }
   });
 

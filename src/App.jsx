@@ -17,6 +17,7 @@ const keyboardMap = [
   { name: "left", keys: ["ArrowLeft", "KeyA"] },
   { name: "right", keys: ["ArrowRight", "KeyD"] },
   { name: "run", keys: ["Shift"] },
+  { name: "jump", keys: ["Space"] },
 ];
 
 function App() {
