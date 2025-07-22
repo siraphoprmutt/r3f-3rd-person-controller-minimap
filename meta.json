@@ -1,5 +1,6 @@
 {
   "name": "Third Person Controller",
   "description": "r3f-3rd-person-controller-minimap",
-  "banner": "./banner.png"
+  "banner": "./banner.png",
+  "hide": true
 }
